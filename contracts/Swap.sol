@@ -21,8 +21,8 @@ contract NFTSwap {
     struct SwapRequest {
         address from;
         address to;
-        address nftContract1;
-        address nftContract2;
+        address contractAddy1;
+        address contractAddy2;
         uint256 tokenId1;
         uint256 tokenId2;
         SwapRequestStatus status;
@@ -151,7 +151,7 @@ contract NFTSwap {
         );
 
         require(
-            IERC721(currentRequest.nftContract2).isApprovedForAll(
+            IERC721(currentRequest.contractAddy2).isApprovedForAll(
                 msg.sender,
                 address(this)
             ),
@@ -163,14 +163,78 @@ contract NFTSwap {
         _swapNft(
             currentRequest.from,
             currentRequest.to,
-            currentRequest.nftContract1,
-            currentRequest.nftContract2,
+            currentRequest.contractAddy1,
+            currentRequest.contractAddy2,
             currentRequest.tokenId1,
             currentRequest.tokenId2
         );
     }
 
-    function getMyCreatedRequests() public view {}
+    function getMyCreatedRequests() public view returns (SwapRequest[] memory) {
+        uint256 totalRequests = _swapRequestId.current();
+        uint256 requestCount = 0;
 
-    function getMyReceivedRequests() public view {}
+        for (uint256 i = 0; i < totalRequests; i++) {
+            if (swapRequests[i + 1].from == msg.sender) {
+                requestCount++;
+            }
+        }
+
+        SwapRequest[] memory requests = new SwapRequest[](requestCount);
+
+        for (uint256 i = 0; i < requestCount; i++) {
+            SwapRequest memory currentRequest = swapRequests[i + 1];
+            if (currentRequest.from == msg.sender) {
+                SwapRequest memory request = SwapRequest(
+                    currentRequest.from,
+                    currentRequest.to,
+                    currentRequest.contractAddy1,
+                    currentRequest.contractAddy2,
+                    currentRequest.tokenId1,
+                    currentRequest.tokenId2,
+                    currentRequest.status
+                );
+
+                requests[i] = request;
+            }
+        }
+
+        return requests;
+    }
+
+    function getMyReceivedRequests()
+        public
+        view
+        returns (SwapRequest[] memory)
+    {
+        uint256 totalRequests = _swapRequestId.current();
+        uint256 requestCount = 0;
+
+        for (uint256 i = 0; i < totalRequests; i++) {
+            if (swapRequests[i + 1].to == msg.sender) {
+                requestCount++;
+            }
+        }
+
+        SwapRequest[] memory requests = new SwapRequest[](requestCount);
+
+        for (uint256 i = 0; i < requestCount; i++) {
+            SwapRequest memory currentRequest = swapRequests[i + 1];
+            if (currentRequest.to == msg.sender) {
+                SwapRequest memory request = SwapRequest(
+                    currentRequest.from,
+                    currentRequest.to,
+                    currentRequest.contractAddy1,
+                    currentRequest.contractAddy2,
+                    currentRequest.tokenId1,
+                    currentRequest.tokenId2,
+                    currentRequest.status
+                );
+
+                requests[i] = request;
+            }
+        }
+
+        return requests;
+    }
 }

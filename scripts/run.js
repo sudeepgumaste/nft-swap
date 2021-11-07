@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const [owner, ...rest] = await hre.ethers.getSigners();
+  const [_, ...rest] = await hre.ethers.getSigners();
   console.log(rest[0].address);
 
   const NFT1 = await hre.ethers.getContractFactory("NFT1");
@@ -55,6 +55,25 @@ async function main() {
 
   txn = await nft2.ownerOf(0);
   console.log("token 0 from NFT2 owner:", txn);
+
+  console.log(
+    "======================= Created Requests ======================="
+  );
+  txn = await nftSwap.connect(rest[0]).getMyCreatedRequests();
+  console.log("Created by 0th account", txn);
+
+  txn = await nftSwap.connect(rest[1]).getMyCreatedRequests();
+  console.log("Created by 1st account", txn);
+
+  console.log(
+    "======================= Received Requests ======================="
+  );
+
+  txn = await nftSwap.connect(rest[0]).getMyReceivedRequests();
+  console.log("Received by 0th account", txn);
+
+  txn = await nftSwap.connect(rest[1]).getMyReceivedRequests();
+  console.log("Received by 1st account", txn);
 }
 
 main()
