@@ -61,6 +61,14 @@ contract NFTSwap {
             IERC721(contractAddy1).isApprovedForAll(msg.sender, address(this)),
             "Please approve this contract in the NFT contract before creating swap request"
         );
+        require(
+            IERC721(contractAddy1).ownerOf(tokenId1) == msg.sender,
+            "The source NFT id does not belong to the sender"
+        );
+        require(
+            IERC721(contractAddy2).ownerOf(tokenId2) == to,
+            "The destination NFT id does not belong to the destination address"
+        );
         _swapRequestId.increment();
         uint256 swapRequestId = _swapRequestId.current();
 
