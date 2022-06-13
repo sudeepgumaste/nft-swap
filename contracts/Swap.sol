@@ -94,7 +94,7 @@ contract NFTSwap {
             tokenId2
         );
     }
-
+//! we're updating the status of the swap request here
     function deactivateSwapRequest(uint256 swapId) public {
         require(
             swapRequests[swapId].from != address(0x0),
@@ -109,7 +109,7 @@ contract NFTSwap {
 
         emit SwapRequestStatusUpdated(swapId, SwapRequestStatus.INACTIVE);
     }
-
+//* for all front end devs out there, this is state and we're pushing a new request to the array to save it for other uses :)
     function activateSwapRequest(uint256 swapId) public {
         require(
             swapRequests[swapId].from != address(0x0),
