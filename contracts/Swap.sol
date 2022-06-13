@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
 contract NFTSwap {
+    //? Provides counters that can only be incremented, decremented or reset.
     using Counters for Counters.Counter;
 
     Counters.Counter private _swapRequestId;
@@ -57,10 +58,12 @@ contract NFTSwap {
         uint256 tokenId1,
         uint256 tokenId2
     ) public {
+        //* did the user approve the swap contract?
         require(
             IERC721(contractAddy1).isApprovedForAll(msg.sender, address(this)),
             "Please approve this contract in the NFT contract before creating swap request"
         );
+         //* is the NFT and it's ID belong to the user
         require(
             IERC721(contractAddy1).ownerOf(tokenId1) == msg.sender,
             "The source NFT id does not belong to the sender"
@@ -121,7 +124,7 @@ contract NFTSwap {
 
         emit SwapRequestStatusUpdated(swapId, SwapRequestStatus.ACTIVE);
     }
-
+//* This function is called when the swapRequest security measure is completed
     function _swapNft(
         address _userAddy1,
         address _userAddy2,
@@ -177,7 +180,7 @@ contract NFTSwap {
             currentRequest.tokenId2
         );
     }
-
+//! the rest is Data that users might wanna see displayed
     function getMyCreatedRequests() public view returns (SwapRequest[] memory) {
         uint256 totalRequests = _swapRequestId.current();
         uint256 requestCount = 0;
